@@ -1,7 +1,7 @@
 # ecological-ephys-behav-ocd
 Custom Matlab code used to analyze data and create figures for the manuscript "Long-term ecological assessment of intracranial electrophysiology synchronized to behavioral markers in Obsessive-Compulsive Disorder." In this repository, there is a folder that contains code to produce each figure in the manuscript (barring the illustration in Figure 1 and the MMVT diagrams in Figure 2 and Extended Data Figure 1). All code is written in MATLAB, and runs on MATLAB R2020b. 
 
-There is a Master script in each folder in the repository, labeled with the prefix 'Master_'. Running the Master script will reproduce all the panels in the figure. The following sections describe how to edit the load/save directories needed to run the code. Please note that all of the directories you set in the code need to be created on your local machine for the code to run. 
+There is a Master script in each folder in the repository, labeled with the prefix `Master_` Running the Master script will reproduce all the panels in the figure. The following sections describe how to edit the load/save directories needed to run the code. Please note that all of the directories you set in the code need to be created on your local machine for the code to run.
 
 
 # Main Text Figures
