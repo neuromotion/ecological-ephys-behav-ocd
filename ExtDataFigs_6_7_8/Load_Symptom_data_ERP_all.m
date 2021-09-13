@@ -18,19 +18,19 @@ SUDS.ratings(del) = [];
 SUDS.times(del) = [];
 
  
-if and(strcmp(subject_id,'aDBS004'),d>=11)
-    SUDS.times = SUDS.times + hours(6);
+if and(strcmp(subject_id,'P3'),d>=11)
+    SUDS.times = SUDS.times + hours(6); %timezone correction
 else
-    SUDS.times = SUDS.times + hours(5);
+    SUDS.times = SUDS.times + hours(5); %timezone correction
 end
 
 c_all = [175,222,105;141,211,199;251,128,114]/255;
 
-if strcmp(subject_id,'aDBS004')
+if strcmp(subject_id,'P3')
     c = c_all(1,:);
-elseif strcmp(subject_id,'aDBS005')
+elseif strcmp(subject_id,'P4')
 c = c_all(2,:);
-elseif strcmp(subject_id,'aDBS007')
+elseif strcmp(subject_id,'P5')
     c = c_all(3,:);
 end
 f = figure;
@@ -41,7 +41,7 @@ SUDS_times_norm = hours(SUDS.times - SUDS.times(1));
 scatter(SUDS_times_norm,SUDS.ratings,'filled','MarkerFaceColor',c)
 ax1 = gca;
 ax1.FontSize = 13;
-ylabel({'P4';'Self-Reported Intensity';'of OCD Symptoms'},'FontSize',13)
+ylabel({subject_id;'Self-Reported Intensity';'of OCD Symptoms'},'FontSize',13)
 xlabel('Hours','FontSize',13)
 hold on;
 

@@ -1,5 +1,5 @@
 %% Load all results
-files= dir([results_name,'/data/']);
+files= dir([results_name]);
 files(1:2) = [];
 
 mean_psd1_all = zeros(length(files)-1,4096);
@@ -9,12 +9,11 @@ times_all = NaT([length(files)-1,1],'TimeZone','America/Chicago');
 del = [];
 for i = 1:(length(files)-1)
     if ~isempty(strfind(files(i).name,'Session'))
-    load([results_name,'/data/',files(i).name])
+    load([results_name,files(i).name])
     mean_psd1_all(i,:) = mean_psd1;
     mean_psd2_all(i,:) = mean_psd2;
     intensity_all(i) = suds_rating_temp;
     times_all(i) = suds_time_temp;
-    clearvars mean_psd1 mean_psd2
     else
         del = [del;i];
     end
@@ -77,8 +76,8 @@ h1.Color = 'k';
 ax1 = gca;
 ax1.FontSize = 10;
 ylabel({'Left LFP';'Normalized Power (dB)'},'FontSize',12)
-
-title({'Delta (0-4) Hz';['Left R=',num2str(r1(2))]},'FontSize',12);
+%xlabel({'SUDs'});%,'FontSize',13)
+title({'Delta (0-4) Hz';['Left R=',num2str(r1(2))]},'FontSize',12);%'; p=',num2str(p1(2))]})
 
 subplot(2,5,6)
 
@@ -87,11 +86,11 @@ scatter(intensity_all,mean(normpsd2(:,f1<4&f1>0),2),'o','MarkerFaceColor',c2,'Ma
 ax1 = gca;
 ax1.FontSize = 10;
 ylabel({'Right LFP';'Normalized Power (dB)'},'FontSize',12)
-title({'Delta (0-4) Hz';['Left R=',num2str(r2(2))]},'FontSize',12);
+title({'Delta (0-4) Hz';['Left R=',num2str(r2(2))]},'FontSize',12);%'; p=',num2str(p1(2))]})
 h1=lsline;
 h1.LineWidth = 1.5;
-h1.Color = 'k';
-xlabel({'Self-Reported Intensity';'of OCD Symptoms'},'FontSize',12);
+h1.Color = 'k';%ylabel('Normalized Delta Power (dB)')
+xlabel({'SUDs'},'FontSize',12);%,'FontSize',13)
 
 ax1 = gca;
 
@@ -105,15 +104,15 @@ scatter(intensity_all,mean(normpsd1(:,f_bool),2),'o','MarkerFaceColor',c1,'Marke
 ax1 = gca;
 ax1.FontSize = 10;
 h1=lsline; h1.LineWidth = 1.5; h1.Color = 'k';
-title({'Theta (4-8) Hz';['Left R=',num2str(r1(2))]},'FontSize',12);
+title({'Theta (4-8) Hz';['Left R=',num2str(r1(2))]},'FontSize',12);%'; p=',num2str(p1(2))]})
 
 subplot(2,5,7)
 scatter(intensity_all,mean(normpsd2(:,f_bool),2),'o','MarkerFaceColor',c2,'MarkerEdgeColor',c2,'MarkerFaceAlpha',.5)
 ax1 = gca;
 ax1.FontSize = 10;
 h1=lsline; h1.LineWidth = 1.5; h1.Color = 'k';
-xlabel({'Self-Reported Intensity';'of OCD Symptoms'},'FontSize',12)
-title({'Theta (4-8) Hz';['Left R=',num2str(r2(2))]},'FontSize',12);
+xlabel({'SUDs'},'FontSize',12)
+title({'Theta (4-8) Hz';['Left R=',num2str(r2(2))]},'FontSize',12);%'; p=',num2str(p1(2))]})
 
 %% Alpha power
 f_bool = and(f1>8,f1<15);
@@ -124,15 +123,15 @@ scatter(intensity_all,mean(normpsd1(:,f_bool),2),'o','MarkerFaceColor',c1,'Marke
 ax1 = gca;
 ax1.FontSize = 10;
 h1=lsline; h1.LineWidth = 1.5; h1.Color = 'k';
-title({'Alpha (8-15 Hz)';['R=',num2str(r1(2))]},'FontSize',12);
+title({'Alpha (8-15 Hz)';['R=',num2str(r1(2))]},'FontSize',12);%,'; p=',num2str(p1(2))]})
 
 subplot(2,5,8)
 scatter(intensity_all,mean(normpsd2(:,f_bool),2),'o','MarkerFaceColor',c2,'MarkerEdgeColor',c2,'MarkerFaceAlpha',.5)
 ax1 = gca;
 ax1.FontSize = 10;
 h1=lsline; h1.LineWidth = 1.5; h1.Color = 'k';
-xlabel({'Self-Reported Intensity';'of OCD Symptoms'},'FontSize',12)
-title({'Alpha (8-15 Hz)';['R=',num2str(r2(2))]},'FontSize',12);
+xlabel({'SUDs'},'FontSize',12)
+title({'Alpha (8-15 Hz)';['R=',num2str(r2(2))]},'FontSize',12);%,'; p=',num2str(p2(2))]})
 
 %% Beta power
 f_bool = and(f1>15,f1<30);
@@ -143,15 +142,15 @@ scatter(intensity_all,mean(normpsd1(:,f_bool),2),'o','MarkerFaceColor',c1,'Marke
 ax1 = gca;
 ax1.FontSize = 10;
 h1=lsline; h1.LineWidth = 1.5; h1.Color = 'k';
-title({'Beta (15-30 Hz)';['R=',num2str(r1(2))]},'FontSize',12);
+title({'Beta (15-30 Hz)';['R=',num2str(r1(2))]},'FontSize',12);%,'; p=',num2str(p1(2))]})
 
 subplot(2,5,9)
 scatter(intensity_all,mean(normpsd2(:,f_bool),2),'o','MarkerFaceColor',c2,'MarkerEdgeColor',c2,'MarkerFaceAlpha',.5)
 ax1 = gca;
 ax1.FontSize = 10;
 h1=lsline; h1.LineWidth = 1.5; h1.Color = 'k';
-xlabel({'Self-Reported Intensity';'of OCD Symptoms'},'FontSize',12)
-title({'Beta (15-30 Hz)';['R=',num2str(r2(2))]},'FontSize',12);
+xlabel({'SUDs'},'FontSize',12)
+title({'Beta (15-30 Hz)';['R=',num2str(r2(2))]},'FontSize',12);%,'; p=',num2str(p2(2))]})
 
 %% Gamma power
 f_bool = and(f1>30,f1<55);
@@ -162,16 +161,16 @@ scatter(intensity_all,mean(normpsd1(:,f_bool),2),'o','MarkerFaceColor',c1,'Marke
 ax1 = gca;
 ax1.FontSize = 10;
 h1=lsline; h1.LineWidth = 1.5; h1.Color = 'k';
-title({'Gamma (30-55 Hz)';['R=',num2str(r1(2))]},'FontSize',12);
+title({'Gamma (30-55 Hz)';['R=',num2str(r1(2))]},'FontSize',12);%,'; p=',num2str(p1(2))]})
 
 subplot(2,5,10)
 scatter(intensity_all,mean(normpsd2(:,f_bool),2),'o','MarkerFaceColor',c2,'MarkerEdgeColor',c2,'MarkerFaceAlpha',.5)
 ax1 = gca;
 ax1.FontSize = 10;
 h1=lsline; h1.LineWidth = 1.5; h1.Color = 'k';
-xlabel({'Self-Reported Intensity';'of OCD Symptoms'},'FontSize',12)
-title({'Gamma (30-55 Hz)';['R=',num2str(r2(2))]},'FontSize',12);
+xlabel({'SUDs'},'FontSize',12)
+title({'Gamma (30-55 Hz)';['R=',num2str(r2(2))]},'FontSize',12);%,'; p=',num2str(p2(2))]})
 
+saveas(gcf,[final_figure_path,subject_id,'_',date_str_i,'_power_suds_extdatafigure.png'])
+saveas(gcf,[final_figure_path,subject_id,'_',date_str_i,'_power_suds_extdatafigure.svg'])
 
-saveas(gcf,[final_figure_path,'/',subject_id,'_power_sx_figure6.png'])
-saveas(gcf,[final_figure_path,'/',subject_id,'_power_sx_figure6.svg'])

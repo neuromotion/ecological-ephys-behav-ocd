@@ -1,0 +1,204 @@
+
+%% load all data streams
+apple_watch_accel = csvread([loaddir,'aw_accel.csv']);
+apple_watch_accel_times = apple_watch_accel(:,1);
+aw_x = apple_watch_accel(:,2);
+aw_y = apple_watch_accel(:,3);
+aw_z = apple_watch_accel(:,4);
+aw_x = (aw_x - mean(aw_x))/std(aw_x);
+aw_y = (aw_y - mean(aw_y))/std(aw_y);
+aw_q = (aw_z - mean(aw_z))/std(aw_z);
+apple_watch_accel_dates = datetime(apple_watch_accel_times,'ConvertFrom','posixtime','TimeZone','America/Chicago');
+
+%HR_times,hr_bpm
+hr = csvread([loaddir,'hr.csv']);
+hr_bpm = hr(:,2);
+hr_dates = datetime(hr(:,1),'ConvertFrom','posixtime','TimeZone','America/Chicago');
+
+
+% Acc_times,x, y, z
+rcs_accel = csvread([loaddir,'rcs_accel.csv']);
+rcs_accel_times = rcs_accel(:,1);
+x = rcs_accel(:,2);
+y = rcs_accel(:,3);
+z = rcs_accel(:,4);
+x = (x - mean(x))/std(x);
+y = (y - mean(y))/std(y);
+z = (z - mean(z))/std(z);
+rcs_accel_dates = datetime(rcs_accel_times,'ConvertFrom','posixtime','TimeZone','America/Chicago');
+
+% lfp_times
+lfp_all = csvread([loaddir,'lfp.csv']);
+lfp_ch1 = lfp_all(:,2);
+lfp_ch2 = lfp_all(:,4);
+lfp_dates = datetime(lfp_all(:,1),'ConvertFrom','posixtime','TimeZone','America/Chicago');
+
+
+%% subtract date of start time and turn into seconds
+starttime = datetime(2020,9,11,14,23,07,'TimeZone','America/Chicago');
+
+HR_times = seconds(hr_dates-starttime);
+aw_times = seconds(apple_watch_accel_dates-starttime);
+lfp_times = seconds(lfp_dates-starttime);
+Acc_times = seconds(rcs_accel_dates - starttime);
+
+figure;
+plot(HR_times,hr_bpm)
+ax = gca;
+ax.XLim = [0,120];
+xlabel('seconds')
+ylabel('Watch HR')
+
+%% parameters
+t1=1250;
+t2=1343; 
+
+ft_size=10;
+FR=25;
+limit1 = floor(FR*(t1-1))+1;%starting frame of the segment
+
+limit2 =ceil(FR*t2);%ending frame of the segment
+len=limit2-limit1+1;%frame length of the segment
+adj= 0;
+num_row = 8;
+num_col =1;
+
+%% colors 
+c = [3,12,125;... %EKG
+    31,120,180;... %BVP
+    178,223,138;... % not used
+    51,160,44;... % not used
+    227,26,28;...%left
+    124,10,2;...%right
+    253,191,111;...%left
+    255,127,0;...%right
+    140,150,198;...%x
+    140,107,177;...%y
+    136,65,157;...%z
+    255 91 165;...%
+    255 187 218]/255;%
+
+%%  process data
+fs_lfp = 250;
+lfp_filt = designfilt('lowpassfir','samplerate',fs_lfp,'passbandfrequency',100,'stopbandfrequency',125,...
+    'stopbandattenuation',40,'passbandripple',0.1);
+lfp_ch1 = filtfilt(lfp_filt,lfp_ch1);
+lfp_ch2 = filtfilt(lfp_filt,lfp_ch2);
+
+lfp_ch1 = lfp_ch1-mean(lfp_ch1);
+lfp_ch2 = lfp_ch2-mean(lfp_ch2);
+%%
+for f = 31554
+    video_frame = f/FR;
+    fig = figure('Color','w','Renderer','painters','Position',[0,0,800,700]);
+
+    %% frame level sliding window left/right limits
+    limit3=f-FR*10;
+    limit4=f+FR*10-1;
+    len2=limit4-limit3+1;
+    x_len = linspace(limit3,limit4,len2);
+    timespan=[limit3/FR,limit4/FR];
+    
+   
+    i = 6;
+    ax8 = subplot(num_row,1,i);
+    ind_aw_ax_times_temp = find(and(aw_times>= timespan(1), aw_times <= timespan(2)));
+
+    plot(aw_times(ind_aw_ax_times_temp),aw_x(ind_aw_ax_times_temp),'Color',c(9,:),'LineWidth',1.5)
+    hold on
+    plot(aw_times(ind_aw_ax_times_temp),aw_y(ind_aw_ax_times_temp),'Color',c(10,:),'LineWidth',1.5)
+    hold on
+    plot(aw_times(ind_aw_ax_times_temp),aw_z(ind_aw_ax_times_temp),'Color',c(11,:),'LineWidth',1.5)
+    hold on
+    plot([video_frame,video_frame],ax8.YLim,'-k')
+    lgd = legend({'x';'y';'z'},'fontsize',ft_size-2,'Location','northeast','NumColumns',3);
+    lgd.Position(4) = lgd.Position(4)-.01;
+    lgd.Position(2) = lgd.Position(2)+.04;
+    legend('boxoff')
+
+    ax8.YAxis.FontSize=ft_size-2; 
+
+    ylabel({'Watch';'Accel. (g)'},'fontsize',ft_size)
+    box off
+    ax8.XAxis.Visible = 'off'; 
+
+    i = 7;
+    ax9 = subplot(num_row,1,i);
+    ind_acc_times_temp = find(and(Acc_times>= timespan(1), Acc_times <= timespan(2)));
+
+    plot(Acc_times(ind_acc_times_temp),x(ind_acc_times_temp),'Color',c(9,:),'LineWidth',1.5)
+    hold on
+    plot(Acc_times(ind_acc_times_temp),y(ind_acc_times_temp),'Color',c(10,:),'LineWidth',1.5)
+    hold on
+    plot(Acc_times(ind_acc_times_temp),z(ind_acc_times_temp),'Color',c(11,:),'LineWidth',1.5)
+    hold on
+    plot([video_frame,video_frame],ax9.YLim,'-k')
+
+    lgd = legend({'x';'y';'z'},'fontsize',ft_size-2,'Location','northeast','NumColumns',3);
+    lgd.Position(4) = lgd.Position(4)-.01;
+    lgd.Position(2) = lgd.Position(2)+.04;
+    legend('boxoff')
+    ax9.YAxis.FontSize=ft_size-2; 
+    ylabel({'RC+S';'Accel. (g)'},'fontsize',ft_size)
+
+    box off
+    hold on
+
+    ax9.XAxis.Visible = 'off';
+
+
+%% 4 LFP
+    i = 8;
+    ax10 = subplot(num_row,num_col,i);
+    ind_lfp_times_temp = find(and(lfp_times >= timespan(1), lfp_times <= timespan(2)));
+
+    plot(lfp_times(ind_lfp_times_temp),lfp_ch1(ind_lfp_times_temp),'Color',c(7,:),'LineWidth',1.2)
+    hold on
+    plot(lfp_times(ind_lfp_times_temp),lfp_ch2(ind_lfp_times_temp),'Color',c(8,:),'LineWidth',1.2)
+    ax10.YLim=[-.2e-3 .2e-3];
+    ax10.YAxis.FontSize=ft_size-2; 
+
+    hold on 
+    plot([video_frame,video_frame],ax10.YLim,'-k')
+
+    box off
+    lgd = legend({'Left';'Right'},'fontsize',ft_size-2,'Location','northeast','NumColumns',2);
+    lgd.Position(4) = lgd.Position(4)-.01;
+    lgd.Position(2) = lgd.Position(2)+.04;
+    legend('boxoff')
+    xlabel('Seconds','fontsize',ft_size)
+    
+    ax10.YAxis.FontSize=ft_size-2; 
+    ylabel('LFP (mV)','fontsize',ft_size)
+
+    hold on
+    box off
+    
+    %% link right panel
+    linkaxes([ax8,ax9,ax10],'x')
+    ax10.XLim = timespan;
+
+    %% link left panel
+    norm_time1 = timespan(1) - (limit1/FR) + 5 + 2;
+    norm_time2 = timespan(1) - (limit1/FR) + 15;
+    helper = round(cellfun(@str2num,ax10.XTickLabel)-limit1/FR+(1/FR));
+    helperstr = cellstr(num2str(helper));
+    ax10.XTickLabel = helperstr;
+    ax10.Legend.String = {'Left';'Right'};
+
+
+    %% image
+    subplot(num_row,num_col,[1:5]);
+    set(gca,'YTick',[]);
+    set(gca,'XTick',[]);
+    set(gca, 'box', 'off');
+    
+
+    %% save
+    img_name=[savedir,sprintf('%05d',f),'_screenshotv2.png'];
+    saveas(fig,img_name);
+    img_name=[savedir,sprintf('%05d',f),'_screenshotv2.svg'];
+    saveas(fig,img_name);
+
+    close(fig);
+end

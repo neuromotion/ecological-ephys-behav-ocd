@@ -5,28 +5,16 @@ num_recs = zeros(length(dates),1);
 for i = 1:length(dates)
     date = dates{i};
     % get LFP directory
-    lfp_dir = ['D:\OCD-Patient-Data\', subject_id, '\at-home\',date,'\LFP\'];
-
-    % if it doesn't exist, then run the LFP organization script
-    if ~exist(lfp_dir)
-        move_lfp_to_date_folder_home;
-    end
-
-    % if it still doesn't exist
-    if ~exist(lfp_dir)
-        error('No LFP file found. Check box.')
-    end
+    lfp_dir = [LFP_data_folder,date,'\LFP\'];
 
     % get the device name
-    % fill out serial numbers of subject's RC+S devices here
-    % format: 'DeviceNPC...."
     addpath(lfp_dir);
-    if strcmp(subject_id,'aDBS005')
-        device_name = '';
-    elseif strcmp(subject_id,'aDBS004')
-        device_name = '';
-    elseif strcmp(subject_id,'aDBS007')
-        device_name = '';
+    if strcmp(subject_id,'P4')
+        device_name = 'DeviceNPC700438H';
+    elseif strcmp(subject_id,'P3')
+        device_name = 'DeviceNPC700439H';
+    elseif strcmp(subject_id,'P5')
+        device_name = 'DeviceNPC700466H';
     end
 
     %extract the recordings
@@ -54,6 +42,9 @@ addpath(genpath('D:\Libraries\Analysis-rcs-data-master-May2021\Analysis-rcs-data
 
 Load_Symptom_data_ERP_all;
 
+if ~exist([results_path,'/data/'])
+    mkdir([results_path,'/data/'])
+end
 for i = 1:length(lfp_dir_all)
     savedir = [results_path,'/data/',recordings_all(i).name,'.mat'];
     if ~exist(savedir)
@@ -166,7 +157,7 @@ for i = 1:length(lfp_dir_all)
             suds_rating_temp = SUDS.ratings(m);
 
             % Save
-            save_fn = [results_path,results_name,recordings_all(i).name,'_',num2str(l),'.mat'];
+            save_fn = [results_name,recordings_all(i).name,'_',num2str(l),'.mat'];
             save(save_fn,'mean_psd1','mean_psd2','psdMat1','psdMat2','lfp1','lfp2','suds_time_temp',...
             'suds_rating_temp');
         
@@ -183,15 +174,16 @@ for i = 1:length(lfp_dir_all)
                 plot(f1,(mean_psd2/mean(mean_psd2(f1>4&f1<80))))
                 xlim([4,80]) 
                 title(['SUDS: ',num2str(suds_rating_temp)])
-                
-            saveas(fig,[results_path,'/resultsERP/figures/',recordings_all(i).name,'_',num2str(l),'_PSD.png'])
+            
+                if ~exist([results_name,'figures\'])
+                    mkdir([results_name,'figures\'])
+                end
+            saveas(fig,[results_name,'figures\',recordings_all(i).name,'_',num2str(l),'_PSD.png'])
             close(fig);
             end            
     end
 end
-
-saveas(gcf,[results_path,'/',results_name,'/sprint_symptom_figure.svg'])
-saveas(gcf,[results_path,'/',results_name,'/sprint_symtpom_figure.png'])
- 
-saveas(gcf,[figure_path,'/suds_v_time/',subject_id,'_',date_str_i,'_','sprint_symtpom_figure.png']);
+ fig = gcf;
+saveas(fig,[final_figure_path,subject_id,'_',date_str_i,'_','sprint_symtpom_figure.png']);
+saveas(fig,[final_figure_path,subject_id,'_',date_str_i,'_','sprint_symtpom_figure.svg']);
 
