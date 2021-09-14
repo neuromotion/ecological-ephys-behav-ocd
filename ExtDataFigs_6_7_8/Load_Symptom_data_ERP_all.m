@@ -1,5 +1,5 @@
 % get dates of OCD intensity readings
-rune_data = readtable([data_folder,date,'_CBT_SUDS_',subject_id,'.xlsx']);
+rune_data = readtable([data_folder,date_str_i,'_CBT_SUDS_',subject_id,'.xlsx']);
 intensity_unix =  double(table2array(rune_data(:,1)));
 intensity_rows = 1:height(rune_data); 
 

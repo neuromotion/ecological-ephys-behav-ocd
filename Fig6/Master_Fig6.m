@@ -1,8 +1,6 @@
-clear all;
-% set path to folder that contains data, the Analysis-rcs-data repo, and a
-% results folder
+% set path to folder that contains data and a results folder
+
 data_path = 'C:\Users\Nicol\OneDrive\Documents\Data\platform-paper-data\Fig6\';
-om_repo = 'C:\Users\Nicol\OneDrive\Documents\GitHub\Analysis-rcs-data\';
 results_path = 'C:\Users\Nicol\OneDrive\Documents\Results\';
 final_figure_path = 'C:\Users\Nicol\OneDrive\Documents\Results\Fig6\';
 
@@ -12,9 +10,8 @@ subject_id = 'P4';
 
 data_folder = [data_path,'ratings\'];
 addpath(genpath(data_folder));
-LFP_data_folder = [data_path,'LFP-all\'];
+LFP_data_folder = [data_path,'P4-LFP-anon\'];
 addpath(genpath(LFP_data_folder));
-addpath(genpath([om_repo,'\code\']))
 addpath(genpath(results_path));
 wd = pwd;
 addpath(genpath(wd))
@@ -43,38 +40,10 @@ lfp_color = [255,127,0]/255;
 dates = {'2021-05-03';'2021-05-04';'2021-05-05'};
 
 %% load RC+S data
-recordings_all = cell(length(dates),1);
-lfp_dir_temp = cell(length(dates),1);
-num_recs = zeros(length(dates),1);
-for i = 1:length(dates)
-    date = dates{i};
-    
-    % get LFP directory
-    lfp_dir = [LFP_data_folder,date,'\LFP\'];
-    addpath(genpath(lfp_dir));
 
-    % get the device name
-    device_name = 'DeviceNPC700438H';
-    
-    %extract the recordings
-    recordings = dir(lfp_dir);
-    recordings = recordings(startsWith(string({recordings.name}), 'Session'));
-    recordings_all{i} = recordings;
-    lfp_dir_temp{i} = lfp_dir;
-    num_recs(i) = length(recordings);
-end
+lfp_dir_all = dir(LFP_data_folder);
+lfp_dir_all = lfp_dir_all(startsWith(string({lfp_dir_all.name}), 'Session'));
 
-% finalize list of all session folders on specified dates
-recordings_all = cell2mat(recordings_all);
-lfp_dir_all = cell(length(recordings_all),1);
-for i = 1:length(dates)
-    if i == 1
-        lfp_dir_all(1:num_recs(i)) = repmat(lfp_dir_temp(i),[num_recs(i),1]);
-    else
-        lfp_dir_all(sum(num_recs(1:(i-1)))+1:sum(num_recs(1:i))) = repmat(lfp_dir_temp(i),[num_recs(i),1]);
-    end
-end
-    
 %% Load LFP data
 
 Load_Symptom_data;
@@ -82,28 +51,15 @@ Load_Symptom_data;
 if ~exist([results_name,'/data/'])
     mkdir([results_name,'/data/']);
 end
+
+LFP_path = [data_path,subject_id,'-LFP-anon/'];
+if ~exist(LFP_path)
+    mkdir(LFP_path)
+end
 for i = 1:length(lfp_dir_all)
-    savedir = [results_path,'/data/'];
-    session_file_name = [savedir,recordings_all(i).name,'.mat'];
-    if ~exist(session_file_name)
-        fn = [lfp_dir_all{i},recordings_all(i).name,'\',device_name,'\'];
-
-        [unifiedDerivedTimes,...
-        timeDomainData, timeDomainData_onlyTimeVariables, timeDomain_timeVariableNames,...
-        AccelData, AccelData_onlyTimeVariables, Accel_timeVariableNames,...
-        PowerData, PowerData_onlyTimeVariables, Power_timeVariableNames,...
-        FFTData, FFTData_onlyTimeVariables, FFT_timeVariableNames,...
-        AdaptiveData, AdaptiveData_onlyTimeVariables, Adaptive_timeVariableNames,...
-        timeDomainSettings, powerSettings, fftSettings, eventLogTable,...
-        metaData, stimSettingsOut, stimMetaData, stimLogSettings,...
-        DetectorSettings, AdaptiveStimSettings, AdaptiveEmbeddedRuns_StimSettings] = ProcessRCS(fn);
-
-        [combinedDataTable] = createCombinedTable({timeDomainData,AccelData},...
-            unifiedDerivedTimes,metaData);
-        save([results_path,'data/'],'combinedDataTable','metaData')
-    else
-        load([results_path,'data/',recordings_all(i).name,'.mat'])
-    end
+    savedir = [LFP_path,lfp_dir_all(i).name];
+    load(savedir)
+    
     plot(hours(combinedDataTable.localTime-SUDS.times(1)),9.8*ones(size(combinedDataTable.localTime)),'Color',lfp_color,'LineWidth',10)
     hold on
     first_time = combinedDataTable.localTime(1);
@@ -204,7 +160,7 @@ for i = 1:length(lfp_dir_all)
             suds_rating_temp = SUDS.ratings(m);
 
             % Save
-            save_fn = [results_name,'/data/',recordings_all(i).name,'_',num2str(l),'.mat'];
+            save_fn = [results_name,'/data/',lfp_dir_all(i).name(1:(end-4)),'_',num2str(l),'.mat'];
             save(save_fn,'mean_psd1','mean_psd2','psdMat1','psdMat2','lfp1','lfp2','suds_time_temp',...
             'suds_rating_temp', 'o1', 'o2','ol1','ol2');
         
@@ -224,7 +180,7 @@ for i = 1:length(lfp_dir_all)
                 if ~exist([results_name,'figures\'])
                     mkdir([results_name,'figures\'])
                 end
-            saveas(fig,[results_name,'figures\',recordings_all(i).name,'_',num2str(l),'_PSD.png'])
+            saveas(fig,[results_name,'figures\',lfp_dir_all(i).name(1:(end-4)),'_',num2str(l),'_PSD.png'])
             close(fig);
             end            
     end

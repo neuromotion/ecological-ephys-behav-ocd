@@ -4,7 +4,7 @@ subject_email = strcat('bcm', subject_lc, '@gmail.com');
 type = 'Intensity of OCD';
 
 % get dates of OCD intensity readings
-rune_data = readtable('events_20210512-100029.csv');
+rune_data = readtable('events_20210512-100029.xlsx');
 intensity_unix =  double(table2array(rune_data(:,1)));
 intensity_rows = find(strcmp(rune_data.event_enum,'ocd')); 
 

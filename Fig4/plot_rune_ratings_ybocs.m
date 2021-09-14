@@ -1,14 +1,15 @@
 %%
 c = [175,222,105;141,211,199;251,128,114]/255;
 
-subject_all = {'adbs004';'adbs005';'adbs007'};
+subject_all = {'aDBS004';'aDBS005';'aDBS007'};
     f = figure
     f.Units = 'inches';
     f.Position = [1,1,12,6];
     f.PaperPosition = [1,1,12,6];
 for i = 1:length(subject_all)
     subject = subject_all{i};
-    subject_email = ['bcm',subject,'@gmail.com'];
+    subject_email = subject;
+
     type = 'Intensity of OCD';
     % get dates of programming visits
     load([loaddir,subject,'_clinical_scores_summary.mat'])
@@ -19,18 +20,18 @@ for i = 1:length(subject_all)
     
     C = table2cell(readtable([loaddir,'strivestudy_patient_logs20210624_combined.csv']));
 
-    idx = find(and(strcmp(C(:,1),subject_email),strcmp(C(:,4),type)));
-    intensity_unix = C(idx,3);
-    intensity = cell2mat(C(idx,8));
+    idx = find(and(strcmp(C(:,1),subject_email),strcmp(C(:,3),type)));
+    intensity_unix = C(idx,2);
+    intensity = cell2mat(C(idx,4));
     
     % find visit dates out of range
-    if strcmp(subject,'adbs005')
+    if strcmp(subject,'aDBS005')
         del = find(visit_dates < datetime('2020-03-04'));
         xval = 3.4;
-    elseif strcmp(subject,'adbs004')
+    elseif strcmp(subject,'aDBS004')
         del = find(visit_dates < datetime('2020-02-01'));
         xval = 2.8;
-    elseif strcmp(subject,'adbs007')
+    elseif strcmp(subject,'aDBS007')
         del = find(visit_dates<datetime('2020-08-01'));
         xval = 1.9;
     else
@@ -86,13 +87,13 @@ for i = 1:length(subject_all)
     end
 
     for j = 1:length(visit_dates)
-        if strcmp(subject,'adbs005')
+        if strcmp(subject,'aDBS005')
             p(6) = plot([dates_norm(j),dates_norm(j)],ax2.YLim,'k','LineStyle','--');
             hold on
-        elseif strcmp(subject,'adbs007')
+        elseif strcmp(subject,'aDBS007')
              p(6) = plot([dates_norm(j),dates_norm(j)],ax2.YLim,'k','LineStyle','--');
             hold on
-        elseif and(strcmp(subject,'adbs004'),j>1)
+        elseif and(strcmp(subject,'aDBS004'),j>1)
              p(6) = plot([dates_norm(j),dates_norm(j)],ax2.YLim,'k','LineStyle','--');
              hold on
         end
@@ -104,12 +105,12 @@ for i = 1:length(subject_all)
     ax2.YTickLabel = cellstr(num2str(ax2.YTick'));
     yyaxis(ax2,'right')
     hold on
-    if strcmp(subject,'adbs004')
+    if strcmp(subject,'aDBS004')
         dates_norm(1) = [];
         ybocs2(1) = [];
     end
     p(5) = plot(dates_norm,ybocs2,'-s','Color',[.2,.2,.2],'MarkerFaceColor',[.9,.9,.9]);
-    if strcmp(subject,'adbs005')
+    if strcmp(subject,'aDBS005')
         max_helper1 = max(dates_norm);
         max_helper2 = max(dates_normi);
     end

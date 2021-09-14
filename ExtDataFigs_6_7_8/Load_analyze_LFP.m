@@ -1,71 +1,21 @@
 %% load RC+S data
-recordings_all = cell(length(dates),1);
-lfp_dir_temp = cell(length(dates),1);
-num_recs = zeros(length(dates),1);
-for i = 1:length(dates)
-    date = dates{i};
-    % get LFP directory
-    lfp_dir = [LFP_data_folder,date,'\LFP\'];
 
-    % get the device name
-    addpath(lfp_dir);
-    if strcmp(subject_id,'P4')
-        device_name = 'DeviceNPC700438H';
-    elseif strcmp(subject_id,'P3')
-        device_name = 'DeviceNPC700439H';
-    elseif strcmp(subject_id,'P5')
-        device_name = 'DeviceNPC700466H';
-    end
-
-    %extract the recordings
-    recordings = dir(lfp_dir);
-    recordings = recordings(startsWith(string({recordings.name}), 'Session'));
-    recordings_all{i} = recordings;
-    lfp_dir_temp{i} = lfp_dir;
-    num_recs(i) = length(recordings);
-end
-
-% finalize list of all session folders on specified dates
-recordings_all = cell2mat(recordings_all);
-lfp_dir_all = cell(length(recordings_all),1);
-for i = 1:length(dates)
-    if i == 1
-        lfp_dir_all(1:num_recs(i)) = repmat(lfp_dir_temp(i),[num_recs(i),1]);
-    else
-        lfp_dir_all(sum(num_recs(1:(i-1)))+1:sum(num_recs(1:i))) = repmat(lfp_dir_temp(i),[num_recs(i),1]);
-    end
-end
+%extract the recordings
+lfp_dir_all = dir(LFP_data_folder);
+lfp_dir_all = lfp_dir_all(startsWith(string({lfp_dir_all.name}), 'Session'));
     
 %% Load LFP data
 
-addpath(genpath('D:\Libraries\Analysis-rcs-data-master-May2021\Analysis-rcs-data-master'))
-
 Load_Symptom_data_ERP_all;
 
-if ~exist([results_path,'/data/'])
-    mkdir([results_path,'/data/'])
+LFP_path = [data_path,subject_id,'-LFP-anon/'];
+if ~exist(LFP_path)
+    mkdir(LFP_path)
 end
 for i = 1:length(lfp_dir_all)
-    savedir = [results_path,'/data/',recordings_all(i).name,'.mat'];
-    if ~exist(savedir)
-        fn = [lfp_dir_all{i},recordings_all(i).name,'\',device_name,'\'];
-
-        [unifiedDerivedTimes,...
-        timeDomainData, timeDomainData_onlyTimeVariables, timeDomain_timeVariableNames,...
-        AccelData, AccelData_onlyTimeVariables, Accel_timeVariableNames,...
-        PowerData, PowerData_onlyTimeVariables, Power_timeVariableNames,...
-        FFTData, FFTData_onlyTimeVariables, FFT_timeVariableNames,...
-        AdaptiveData, AdaptiveData_onlyTimeVariables, Adaptive_timeVariableNames,...
-        timeDomainSettings, powerSettings, fftSettings, eventLogTable,...
-        metaData, stimSettingsOut, stimMetaData, stimLogSettings,...
-        DetectorSettings, AdaptiveStimSettings, AdaptiveEmbeddedRuns_StimSettings] = ProcessRCS(fn);
-
-        [combinedDataTable] = createCombinedTable({timeDomainData,AccelData},...
-            unifiedDerivedTimes,metaData);
-        save(savedir,'combinedDataTable','metaData')
-    else
-        load(savedir)
-    end
+    LFP_fn = [LFP_path,lfp_dir_all(i).name];
+    load(LFP_fn)
+    
     plot(hours(combinedDataTable.localTime-SUDS.times(1)),9.8*ones(size(combinedDataTable.localTime)),'Color',lfp_color,'LineWidth',10)
     hold on
     first_time = combinedDataTable.localTime(1);
@@ -157,7 +107,7 @@ for i = 1:length(lfp_dir_all)
             suds_rating_temp = SUDS.ratings(m);
 
             % Save
-            save_fn = [results_name,recordings_all(i).name,'_',num2str(l),'.mat'];
+            save_fn = [results_name,lfp_dir_all(i).name(1:(end-4)),'_',num2str(l),'.mat'];
             save(save_fn,'mean_psd1','mean_psd2','psdMat1','psdMat2','lfp1','lfp2','suds_time_temp',...
             'suds_rating_temp');
         
@@ -178,7 +128,7 @@ for i = 1:length(lfp_dir_all)
                 if ~exist([results_name,'figures\'])
                     mkdir([results_name,'figures\'])
                 end
-            saveas(fig,[results_name,'figures\',recordings_all(i).name,'_',num2str(l),'_PSD.png'])
+            saveas(fig,[results_name,'figures\',lfp_dir_all(i).name(1:(end-4)),'_',num2str(l),'_PSD.png'])
             close(fig);
             end            
     end

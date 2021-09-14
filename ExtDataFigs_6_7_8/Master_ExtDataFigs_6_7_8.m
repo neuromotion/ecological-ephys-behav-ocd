@@ -1,8 +1,7 @@
 % specify subject ID
-subject_id = 'P5';
+subject_id = 'P3';
 
 data_path = 'C:\Users\Nicol\OneDrive\Documents\Data\platform-paper-data\ExtDataFigs_6_7_8\';
-om_repo = 'C:\Users\Nicol\OneDrive\Documents\GitHub\Analysis-rcs-data\';
 results_path = 'C:\Users\Nicol\OneDrive\Documents\Results\';
 final_figure_path_base = 'C:\Users\Nicol\OneDrive\Documents\Results\ExtDataFig';
 
@@ -17,9 +16,8 @@ end
 %% set paths
 data_folder = [data_path,subject_id,'-CBT-ratings\'];
 addpath(genpath(data_folder));
-LFP_data_folder = [data_path,subject_id,'-LFP\'];
+LFP_data_folder = [data_path,subject_id,'-LFP-anon\'];
 addpath(genpath(LFP_data_folder));
-addpath(genpath([om_repo,'\code\']))
 addpath(genpath(results_path));
 wd = pwd;
 addpath(genpath(wd))

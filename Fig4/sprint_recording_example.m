@@ -1,11 +1,11 @@
 %%
 C = table2cell(readtable([loaddir,'strivestudy_patient_logs20200921.csv']));
 
-subject_email = ['bcmadbs005@gmail.com'];
+subject_email = ['aDBS005'];
 type = 'Intensity of OCD';
-idx = find(and(strcmp(C(:,1),subject_email),strcmp(C(:,4),type)));
-intensity_unix = C(idx,3);
-intensity = cell2mat(C(idx,8));
+idx = find(and(strcmp(C(:,1),subject_email),strcmp(C(:,3),type)));
+intensity_unix = C(idx,2);
+intensity = cell2mat(C(idx,4));
 
 dates = datetime(cell2mat(intensity_unix),'ConvertFrom','posixtime','TimeZone','America/Chicago');
 starttime= datetime(2020,9,20,2,0,0,'TimeZone','America/Chicago');
