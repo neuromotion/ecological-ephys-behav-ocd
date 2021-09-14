@@ -16,9 +16,7 @@ Open the `Fig4` folder. In `Master_Fig4.m`, update the data directory (`loaddir`
 Open the `Fig5` folder. In `Master_Fig5.m`, update the data directory (`loaddir`) and the save directory (`savedir`) with where you would like to load data from and save data to on your local machine (Lines 3-4). Run `Master_Fig5.m` to reproduce Figure 5. Note that the images showing screenshots from the ERP video will not be reproduced. 
 
 ## Figure 6
-To reproduce Figure 6, you will first need to clone the rcs-analysis repository to your local machine ([https://github.com/openmind-consortium/Analysis-rcs-data](https://github.com/openmind-consortium/Analysis-rcs-data)).
-
-Open the `Fig6` folder. In `Master_Fig6.m`, update the data directory (`data_path`), the path to the rcs-analysis repository (`om_repo`), the path to where intermediate resutls files will be saved (`results_path`), and the `final_figure_path` where the final panels of the figure will be saved (lines 4-7). Run `Master_Fig6.m` to reproduce Figure 6.
+Open the `Fig6` folder. In `Master_Fig6.m`, update the data directory (`data_path`), the path to where intermediate resutls files will be saved (`results_path`), and the `final_figure_path` where the final panels of the figure will be saved (lines 4-7). Run `Master_Fig6.m` to reproduce Figure 6.
 
 
 # Extended Data Figures
@@ -36,6 +34,4 @@ Open the `ExtData4` folder. In `Master_ExtDataFig4.m`, update the data directory
 Open the `ExtData5` folder. In `Master_ExtDataFig5.m`, update the data directory (`loaddir`) and the save directory (`savedir`) with where you would like to load data from and save data to on your local machine (Lines 3-4). Run `Master_ExtDataFig5.m` to reproduce Extended Data Figure 5. Note that the images showing screenshots from the ERP video will not be reproduced. 
 
 ## Extended Data Figures 6, 7, and 8
-To reproduce Extended Data Figures 6, 7, and 8, you will first need to clone the rcs-analysis repository to your local machine ([https://github.com/openmind-consortium/Analysis-rcs-data](https://github.com/openmind-consortium/Analysis-rcs-data)).
-
-Open the `ExDataFigs_6_7_8` folder. In `Master_ExtDataFigs_6_7_8.m`, update the data directory (`data_path`), the path to the rcs-analysis repository (`om_repo`), the path to where intermediate resutls files will be saved (`results_path`), and the `final_figure_path_base` where the final panels of the figure will be saved (lines 4-7). Edit `subject` to reproduce each figure: P3 --> Ext Data Figure 6, P4 --> Ext Data Figure 7, P5 --> Ext Data Figure 8. Run `Master_ExtDataFigs_6_7_8.m` to reproduce Figures 6, 7, and 8.
+Open the `ExDataFigs_6_7_8` folder. In `Master_ExtDataFigs_6_7_8.m`, update the data directory (`data_path`), the path to where intermediate resutls files will be saved (`results_path`), and the `final_figure_path_base` where the final panels of the figure will be saved (lines 4-7). Edit `subject` to reproduce each figure: P3 --> Ext Data Figure 6, P4 --> Ext Data Figure 7, P5 --> Ext Data Figure 8. Run `Master_ExtDataFigs_6_7_8.m` to reproduce Figures 6, 7, and 8.
