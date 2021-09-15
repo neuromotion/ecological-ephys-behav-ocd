@@ -3,6 +3,11 @@ Custom Matlab code used to analyze data and create figures for the manuscript "L
 
 There is a Master script in each folder in the repository, labeled with the prefix `Master_` Running the Master script will reproduce all the panels in the figure. The following sections describe how to edit the load/save directories needed to run the code. Please note that all of the directories you set in the code need to be created on your local machine for the code to run.
 
+# Participant Identifiers
+The paper refers to the participants as P3, P4, and P5. Some of the code and data may refer to the participants as aDBS004, aDBS005, and aDBS007. Please see the mapping below
+P3 = aDBS004
+P4 = aDBS005
+P5 = aDBS007
 
 # Main Text Figures
 
